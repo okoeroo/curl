@@ -806,11 +806,11 @@ static CURLcode darwinssl_connect_step1(struct connectdata *conn,
   /* If this is a domain name and not an IP address, then configure SNI.
    * Also: the verifyhost setting influences SNI usage */
   /* If this is a domain name and not an IP address, then configure SNI: */
-  if((0 == Curl_inet_pton(AF_INET, conn->host.name, &addr))
+  if((0 == Curl_inet_pton(AF_INET, conn->host.name, &addr)) &&
 #ifdef ENABLE_IPV6
-     && (0 == Curl_inet_pton(AF_INET6, conn->host.name, &addr))
+     (0 == Curl_inet_pton(AF_INET6, conn->host.name, &addr)) &&
 #endif
-     && data->set.ssl.verifyhost) {
+     data->set.ssl.verifyhost) {
     err = SSLSetPeerDomainName(connssl->ssl_ctx, conn->host.name,
                                strlen(conn->host.name));
     if(err != noErr) {
@@ -877,8 +877,8 @@ darwinssl_connect_step2(struct connectdata *conn, int sockindex)
         return CURLE_SSL_CACERT;
 
       case errSSLHostNameMismatch:
-        failf(data, "SSL certificate peer verification failed, the certificate did "
-                    "not match \"%s\"\n", conn->host.dispname);
+        failf(data, "SSL certificate peer verification failed, the "
+              "certificate did not match \"%s\"\n", conn->host.dispname);
         return CURLE_PEER_FAILED_VERIFICATION;
 
       default:

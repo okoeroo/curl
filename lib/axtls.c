@@ -311,30 +311,33 @@ Curl_axtls_connect(struct connectdata *conn,
    */
 
 
-  /* There is no (DNS) Altnames count in the version 1.4.8 API. There is a risk of an inifite loop */
-  for (dns_altname_index = 0; ; dns_altname_index++) {
+  /* There is no (DNS) Altnames count in the version 1.4.8 API. There is a
+     risk of an inifite loop */
+  for(dns_altname_index = 0; ; dns_altname_index++) {
     dns_altname = ssl_get_cert_subject_alt_dnsname(ssl, dns_altname_index);
-    if (dns_altname == NULL) {
+    if(dns_altname == NULL) {
       break;
     }
     found_subject_alt_names = 1;
 
-    infof(data, "\tComparing subject alt name DNS with hostname: %s <-> %s\n", dns_altname, conn->host.name);
-    if (Curl_cert_hostcheck(dns_altname, conn->host.name)) {
+    infof(data, "\tComparing subject alt name DNS with hostname: %s <-> %s\n",
+          dns_altname, conn->host.name);
+    if(Curl_cert_hostcheck(dns_altname, conn->host.name)) {
       found_subject_alt_name_matching_conn = 1;
       break;
     }
   }
 
   /* RFC2818 checks */
-  if (found_subject_alt_names && !found_subject_alt_name_matching_conn) {
+  if(found_subject_alt_names && !found_subject_alt_name_matching_conn) {
     /* Break connection ! */
     Curl_axtls_close(conn, sockindex);
     failf(data, "\tsubjectAltName(s) do not match %s\n", conn->host.dispname);
     return CURLE_PEER_FAILED_VERIFICATION;
   }
-  else if (found_subject_alt_names == 0) {
-    /* Per RFC2818, when no Subject Alt Names were available, examine the peer CN as a legacy fallback */
+  else if(found_subject_alt_names == 0) {
+    /* Per RFC2818, when no Subject Alt Names were available, examine the peer
+       CN as a legacy fallback */
     peer_CN = ssl_get_cert_dn(ssl, SSL_X509_CERT_COMMON_NAME);
     if(peer_CN == NULL) {
       /* Similar behaviour to the OpenSSL interface */
@@ -347,11 +350,13 @@ Curl_axtls_connect(struct connectdata *conn,
         if(data->set.ssl.verifyhost) {
           /* Break connection ! */
           Curl_axtls_close(conn, sockindex);
-          failf(data, "\tcommon name \"%s\" does not match \"%s\"\n", peer_CN, conn->host.dispname);
+          failf(data, "\tcommon name \"%s\" does not match \"%s\"\n",
+                peer_CN, conn->host.dispname);
           return CURLE_PEER_FAILED_VERIFICATION;
         }
         else
-          infof(data, "\tcommon name \"%s\" does not match \"%s\"\n", peer_CN, conn->host.dispname);
+          infof(data, "\tcommon name \"%s\" does not match \"%s\"\n",
+                peer_CN, conn->host.dispname);
       }
     }
   }

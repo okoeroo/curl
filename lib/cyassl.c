@@ -242,9 +242,8 @@ cyassl_connect_step2(struct connectdata *conn,
   /* Enable RFC2818 checks */
   if(data->set.ssl.verifyhost) {
     ret = CyaSSL_check_domain_name(conssl->handle, conn->host.name);
-    if (ret == SSL_FAILURE) {
+    if(ret == SSL_FAILURE)
       return CURLE_OUT_OF_MEMORY;
-    }
   }
 
   ret = SSL_connect(conssl->handle);
@@ -265,7 +264,8 @@ cyassl_connect_step2(struct connectdata *conn,
      * as also mismatching CN fields */
     else if(DOMAIN_NAME_MISMATCH == detail) {
 #if 1
-      failf(data, "\tsubject alt name(s) and/or common name do not match \"%s\"\n", conn->host.dispname);
+      failf(data, "\tsubject alt name(s) or common name do not match \"%s\"\n",
+            conn->host.dispname);
       return CURLE_PEER_FAILED_VERIFICATION;
 #else
       /* When the CyaSSL_check_domain_name() is used and you desire to continue
@@ -274,11 +274,15 @@ cyassl_connect_step2(struct connectdata *conn,
        * way to do this is currently to switch the CyaSSL_check_domain_name()
        * in and out based on the 'data->set.ssl.verifyhost' value. */
       if(data->set.ssl.verifyhost) {
-        failf(data, "\tsubject alt name(s) and/or common name do not match \"%s\"\n", conn->host.dispname);
+        failf(data,
+              "\tsubject alt name(s) or common name do not match \"%s\"\n",
+              conn->host.dispname);
         return CURLE_PEER_FAILED_VERIFICATION;
       }
       else {
-        infof(data, "\tsubject alt name(s) and/or common name do not match \"%s\"\n", conn->host.dispname);
+        infof(data,
+              "\tsubject alt name(s) and/or common name do not match \"%s\"\n",
+              conn->host.dispname);
         return CURLE_OK;
       }
 #endif

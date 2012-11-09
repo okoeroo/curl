@@ -212,7 +212,8 @@ polarssl_connect_step1(struct connectdata *conn,
     infof(data, "PolarSSL re-using session\n");
   }
 
-/* PolarSSL SVN revision r1316 to r1317, matching <1.2.0 is to cover Ubuntu's 1.1.4 version and the like */
+/* PolarSSL SVN revision r1316 to r1317, matching <1.2.0 is to cover Ubuntu's
+   1.1.4 version and the like */
 #if POLARSSL_VERSION_NUMBER<0x01020000
   ssl_set_session(&connssl->ssl, 1, 600,
                   &connssl->ssn);
@@ -312,7 +313,8 @@ polarssl_connect_step2(struct connectdata *conn,
     return CURLE_PEER_FAILED_VERIFICATION;
   }
 
-/* PolarSSL SVN revision r1316 to r1317, matching <1.2.0 is to cover Ubuntu's 1.1.4 version and the like */
+/* PolarSSL SVN revision r1316 to r1317, matching <1.2.0 is to cover Ubuntu's
+   1.1.4 version and the like */
 #if POLARSSL_VERSION_NUMBER<0x01020000
   if(conn->ssl[sockindex].ssl.peer_cert) {
 #else
@@ -321,7 +323,8 @@ polarssl_connect_step2(struct connectdata *conn,
     /* If the session was resumed, there will be no peer certs */
     memset(buffer, 0, sizeof(buffer));
 
-/* PolarSSL SVN revision r1316 to r1317, matching <1.2.0 is to cover Ubuntu's 1.1.4 version and the like */
+/* PolarSSL SVN revision r1316 to r1317, matching <1.2.0 is to cover Ubuntu's
+   1.1.4 version and the like */
 #if POLARSSL_VERSION_NUMBER<0x01020000
     if(x509parse_cert_info(buffer, sizeof(buffer), (char *)"* ",
                            conn->ssl[sockindex].ssl.peer_cert) != -1)

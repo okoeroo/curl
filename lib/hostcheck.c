@@ -22,9 +22,11 @@
 
 #include "setup.h"
 
+#if defined(USE_SSLEAY) || defined(USE_AXTLS)
+/* these two backends use functions from this file */
+
 #include "hostcheck.h"
 #include "rawstr.h"
-
 
 /*
  * Match a hostname against a wildcard pattern.
@@ -35,15 +37,16 @@
  * http://tools.ietf.org/html/rfc6125#section-6.4.3
  */
 
-int Curl_hostmatch(const char *hostname, const char *pattern)
+static int hostmatch(const char *hostname, const char *pattern)
 {
   const char *pattern_label_end, *pattern_wildcard, *hostname_label_end;
   int wildcard_enabled;
   size_t prefixlen, suffixlen;
   pattern_wildcard = strchr(pattern, '*');
-  if(pattern_wildcard == NULL) {
-    return Curl_raw_equal(pattern, hostname) ? CURL_HOST_MATCH : CURL_HOST_NOMATCH;
-  }
+  if(pattern_wildcard == NULL)
+    return Curl_raw_equal(pattern, hostname) ?
+      CURL_HOST_MATCH : CURL_HOST_NOMATCH;
+
   /* We require at least 2 dots in pattern to avoid too wide wildcard
      match. */
   wildcard_enabled = 1;
@@ -53,20 +56,21 @@ int Curl_hostmatch(const char *hostname, const char *pattern)
      Curl_raw_nequal(pattern, "xn--", 4)) {
     wildcard_enabled = 0;
   }
-  if(!wildcard_enabled) {
-    return Curl_raw_equal(pattern, hostname) ? CURL_HOST_MATCH : CURL_HOST_NOMATCH;
-  }
+  if(!wildcard_enabled)
+    return Curl_raw_equal(pattern, hostname) ?
+      CURL_HOST_MATCH : CURL_HOST_NOMATCH;
+
   hostname_label_end = strchr(hostname, '.');
   if(hostname_label_end == NULL ||
-     !Curl_raw_equal(pattern_label_end, hostname_label_end)) {
+     !Curl_raw_equal(pattern_label_end, hostname_label_end))
     return CURL_HOST_NOMATCH;
-  }
+
   /* The wildcard must match at least one character, so the left-most
      label of the hostname is at least as large as the left-most label
      of the pattern. */
-  if(hostname_label_end - hostname < pattern_label_end - pattern) {
+  if(hostname_label_end - hostname < pattern_label_end - pattern)
     return CURL_HOST_NOMATCH;
-  }
+
   prefixlen = pattern_wildcard - pattern;
   suffixlen = pattern_label_end - (pattern_wildcard+1);
   return Curl_raw_nequal(pattern, hostname, prefixlen) &&
@@ -84,9 +88,9 @@ int Curl_cert_hostcheck(const char *match_pattern, const char *hostname)
   if(Curl_raw_equal(hostname, match_pattern)) /* trivial case */
     return 1;
 
-  if(Curl_hostmatch(hostname,match_pattern) == CURL_HOST_MATCH)
+  if(hostmatch(hostname,match_pattern) == CURL_HOST_MATCH)
     return 1;
   return 0;
 }
 
-
+#endif /* SSLEAY or AXTLS */
