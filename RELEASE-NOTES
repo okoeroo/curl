@@ -11,6 +11,7 @@ This release includes the following changes:
 
  o metalink/md5: Use CommonCrypto on Apple operating systems
  o href_extractor: new example code extracting href elements
+ o NSS can be used for metalink hashing [13]
 
 This release includes the following bugfixes:
 
@@ -32,6 +33,18 @@ This release includes the following bugfixes:
  o OpenSSL: show full issuer string [10]
  o fix HTTP auth regression [11]
  o CURLOPT_SSL_VERIFYHOST: stop supporting the 1 value [12]
+ o ftp: EPSV-disable fix over SOCKS [14]
+ o Digest: Add microseconds into nounce calculation [15]
+ o SCP/SFTP: improve error code used for send failures
+ o SSL: Several SSL-backend related fixes
+ o removed the notorious "additional stuff not fine" debug output
+ o OpenSSL: Disable SSL/TLS compression - avoid the "CRIME" attack
+ o FILE: Make upload-writes unbuffered
+ o custom memory callbacks failure with HTTP proxy (and more) [16]
+ o TFTP: handle resends
+ o autoconf: don't force-disable compiler debug option
+ o winbuild: Fix PDB file output [17]
+ o test2032: spurious failure caused by premature termination [18]
 
 This release includes the following known bugs:
 
@@ -43,7 +56,10 @@ advice from friends like these:
  Guenter Knauf, Alessandro Ghedini, Nick Zitzmann, Michal Kowalczyk,
  Jeff Connelly, Oscar Norlander, Guido Berhoerster, Marc Hoersken,
  Dave Reisner, Jan Ehrhardt, John Suprock, Alessandro Ghedini,
- Lars Buitinck
+ Lars Buitinck, Anton Malov, Sergei Nikulov, Patrick Monnerat,
+ Gabriel Sjoberg, Oscar Koeroo, Fabian Keil, Johnny Luong, Cristian Rodríguez,
+ Sebastian Rasmussen, Mark Snelling, Christian Vogt, Marcin Adamski,
+ Ajit Dhumale
 
         Thanks! (and sorry if I forgot to mention someone)
 
@@ -61,3 +77,9 @@ References to bug reports and discussions on issues:
  [10] = http://curl.haxx.se/bug/view.cgi?id=3579286
  [11] = http://curl.haxx.se/bug/view.cgi?id=3582718
  [12] = http://daniel.haxx.se/blog/2012/10/25/libcurl-claimed-to-be-dangerous/
+ [13] = http://curl.haxx.se/bug/view.cgi?id=3578163
+ [14] = http://curl.haxx.se/bug/view.cgi?id=3586338
+ [15] = https://github.com/bagder/curl/pull/50
+ [16] = http://curl.haxx.se/mail/lib-2012-11/0125.html
+ [17] = http://curl.haxx.se/bug/view.cgi?id=3586741
+ [18] = http://curl.haxx.se/mail/lib-2012-11/0095.html
